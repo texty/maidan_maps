@@ -35,7 +35,6 @@ html, body, #wrapper {
   opacity: 1;
 }
 
-
 #map {
   position:absolute;
   width: 100%;
@@ -43,6 +42,7 @@ html, body, #wrapper {
   left:0;
   top:0;
   z-index:1;
+  opacity:0;
 }
 
 svg {
@@ -130,7 +130,7 @@ svg {
   user-select: none;
   cursor: pointer;
   &:hover {
-    border:1px solid #bfd3e6;
+    border:1px solid #fee391;
   }
 }
 
@@ -145,7 +145,7 @@ svg {
 
 .btn.focus,.btn:focus,
 .btn:hover {
-  color: #9ebcda;
+  color: #fee391;
 }
 
 .clock-in-da-top {
@@ -173,7 +173,6 @@ svg {
 
 .video-events-con {
   opacity: 1;
-  position: fixed;
   width: 100%   !important;
   height: auto   !important;
   margin: 0;
@@ -198,9 +197,19 @@ svg {
   bottom: 110px; 
   right: 30px;
   opacity: 0;
-  @media #{$brk-xxsnarrow} {
+  @media #{$brk-spnarrow} {
     display:none;
   }
+}
+
+.video-filter {
+  display: block;
+  position: absolute;
+  background: black;
+  height: 100%;
+  width: 100%;
+  opacity: 0.35;
+  z-index:10;
 }
 
 video { 

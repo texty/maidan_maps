@@ -1,18 +1,13 @@
 // ======== Mapbox ===========
 
 var screen_width = $( window ).width();
-console.log(screen_width);
-// if ( screen_width <= 768) {
-//   var video = document.getElementById('video-events');
-//   video.muted = true;
-// }
 var zoom_size = (screen_width <= 768 ? 13.5: screen_width <= 1280 ? 14 : screen_width <= 1440 ? 14.4 : 14.6);
 var map_center = (screen_width <= 768 ? [30.523904,50.448349] : [30.520715, 50.448279] );
 
 
 var map = new mapboxgl.Map({
     container: 'map', // container id
-    style: 'basic.json', // styles
+    style: 'js/basic.json', // styles
     minZoom: 12, //restrict map zoom 
     maxZoom: 18,
     center: map_center, // starting position
@@ -27,7 +22,7 @@ map.doubleClickZoom.disable();
 
 map.on('load', function () {
   
-  var bdata = 'lines_181012.geojson';
+  var bdata = 'data/lines_181012.geojson';
   map.addSource('barricade-data', { type: 'geojson', data: bdata });
   
 
@@ -59,7 +54,7 @@ map.on('load', function () {
     });
 
   
-  var buildings_data = 'maidan_buildings.geojson';
+  var buildings_data = 'data/maidan_buildings.geojson';
   map.addSource('buildings_data', { type: 'geojson', data: buildings_data });
   
 
@@ -87,7 +82,7 @@ map.on('load', function () {
 
 
   // fights layer
-  map.addSource('fights-data', { type: 'geojson', data: "fights18.geojson" });
+  map.addSource('fights-data', { type: 'geojson', data: "data/fights18.geojson" });
   
   map.addLayer({
       "id": "fights",
@@ -195,7 +190,7 @@ feMerge.append("feMergeNode")
 
 
 // loading main polygons 
-d3.json("m_main_test.json", function(err, geodata) {
+d3.json("data/polygons.json", function(err, geodata) {
   var geometries = geodata.geo181000;
   
   var polygons = svg.selectAll("path")
@@ -231,7 +226,7 @@ var div = d3.select("body").append("div")
 
 
 // loading points of killings
-d3.json("all-killed.geojson", function(err, geodata) {
+d3.json("data/all-killed.geojson", function(err, geodata) {
   var geometries = geodata.features;
  
   function mapboxProjection(lonlat) {
@@ -331,7 +326,7 @@ function show_killing(date1, date2, condition) {
 
 
 var protestline_data; // global 
-d3.json("protestline_all.geojson", function(err, data) {
+d3.json("data/protestline_all.geojson", function(err, data) {
     protestline_data = data;
 });
 
@@ -404,7 +399,7 @@ function update_position(features) {
 
 
 var morph_data; // global 
-d3.json("m_main_test.json", function(err, data) {
+d3.json("data/polygons.json", function(err, data) {
     morph_data = data;
 });
 
@@ -432,7 +427,7 @@ function morph(key, list) {
 
 // ======== SCROLL ===========
 // trigger video
-function play_video(file, note) {
+function play_video(file, note, img) {
   $( "#map" ).css( "z-index", 1 );
   $( ".video-events-con" ).css( "z-index", 2 );
   $("#map").animate({ opacity: 0 }, 300 );
@@ -442,6 +437,7 @@ function play_video(file, note) {
   document.getElementById('video-events').load();
   document.getElementById('video-events').play();
   $("#video-note").html(note);
+  $("#video-map").attr("src", img);
 }
 
 
@@ -534,7 +530,7 @@ $('#seven').waypoint(function(direction) {
   show_buildings('181012');
   if (direction === 'down') {
     $("#hint, #video-note, #video-map").animate({ opacity: 1 }, 300 );
-    play_video("http://texty.org.ua/video/maidan_maps/mariinka-start.mp4");
+    play_video("http://texty.org.ua/video/maidan_maps/mariinka-start.mp4", "Початок протистояння в Маріїнському парк", "img/minimap-mariinka-start.png");
     window.setTimeout(function(){
       $("#hint").animate({ opacity: 0 }, 3000 );
     },7000); 
@@ -550,7 +546,7 @@ $('#eight').waypoint(function(direction) {
     stop_video();
     $("#hint").animate({ opacity: 0 }, 300 );
   } else if (direction === 'up') {
-    play_video("http://texty.org.ua/video/maidan_maps/mariinka-start.mp4", "Початок протистояння в Маріїнському парк");
+    play_video("http://texty.org.ua/video/maidan_maps/mariinka-start.mp4", "Початок протистояння в Маріїнському парк", "img/minimap-mariinka-start.png");
   }
 },{ offset: 250 });
 
@@ -595,7 +591,7 @@ $('#twelve').waypoint(function(direction) {
 
 $('#thirteen').waypoint(function(direction) {
   if (direction === 'down') {
-    play_video("http://texty.org.ua/video/maidan_maps/grushevskogo9.mp4", "Тітушки та силовики добивають поранених протестувальників біля будинку №9 на вул. Грушевського"); 
+    play_video("http://texty.org.ua/video/maidan_maps/grushevskogo9.mp4", "Тітушки та силовики добивають поранених протестувальників біля будинку №9 на вул. Грушевського", "img/minimap-grushevskogo9.png"); 
   } else if (direction === 'up') {
     stop_video();
   }
@@ -608,14 +604,14 @@ $('#fourteen').waypoint(function(direction) {
   if (direction === 'down') {
     stop_video();
   } else if (direction === 'up') {
-    play_video("http://texty.org.ua/video/maidan_maps/grushevskogo9.mp4", "Тітушки та силовики добивають поранених протестувальників біля будинку №9 на вул. Грушевського");
+    play_video("http://texty.org.ua/video/maidan_maps/grushevskogo9.mp4", "Тітушки та силовики добивають поранених протестувальників біля будинку №9 на вул. Грушевського", "img/minimap-grushevskogo9.png");
   }
 },{ offset: 350 });
 
 
 $('#fifteen').waypoint(function(direction) {
   if (direction === 'down') {
-    play_video("http://texty.org.ua/video/maidan_maps/gas-kriposnyi.mp4", "Леонід Бібік намагається розчистити дорогу за допомогою міліцейського ГАЗу"); 
+    play_video("http://texty.org.ua/video/maidan_maps/gas-kriposnyi.mp4", "Леонід Бібік намагається розчистити дорогу за допомогою міліцейського ГАЗу", "img/minimap-gas-kriposnyi.png"); 
   } else if (direction === 'up') {
     stop_video();
   }
@@ -627,7 +623,7 @@ $('#sixteen').waypoint(function(direction) {
   if (direction === 'down') {
     stop_video();
   } else if (direction === 'up') {
-    play_video("http://texty.org.ua/video/maidan_maps/gas-kriposnyi.mp4", "Леонід Бібік намагається розчистити дорогу за допомогою міліцейського ГАЗу"); 
+    play_video("http://texty.org.ua/video/maidan_maps/gas-kriposnyi.mp4", "Леонід Бібік намагається розчистити дорогу за допомогою міліцейського ГАЗу", "img/minimap-gas-kriposnyi.png"); 
   }
 },{ offset: 350 });
 
@@ -661,7 +657,7 @@ $('#eighteen').waypoint(function(direction) {
 
 $('#nineteen').waypoint(function(direction) {
   if (direction === 'down') {
-    play_video("http://texty.org.ua/video/maidan_maps/shovkovychna.mp4", "Протистояння на перехресті Інститутська-Шовковична"); 
+    play_video("http://texty.org.ua/video/maidan_maps/shovkovychna.mp4", "Протистояння на перехресті Інститутська-Шовковична", "img/minimap-shovkovychna.png"); 
   } else if (direction === 'up') {
     stop_video(); 
   }
@@ -672,7 +668,7 @@ $('#twenty').waypoint(function(direction) {
   if (direction === 'down') {
     stop_video(); 
   } else if (direction === 'up') {
-    play_video("http://texty.org.ua/video/maidan_maps/shovkovychna.mp4", "Протистояння на перехресті Інститутська-Шовковична"); 
+    play_video("http://texty.org.ua/video/maidan_maps/shovkovychna.mp4", "Протистояння на перехресті Інститутська-Шовковична", "img/minimap-shovkovychna.png"); 
   }
 },{ offset: 350 });
 
@@ -680,7 +676,7 @@ $('#twenty').waypoint(function(direction) {
 $('#twenty-one').waypoint(function(direction) {
   $(".mapboxgl-popup, .fight-path").fadeOut("slow");
   morph("geo181610", ["maidan", "berkut"]);
-  map.getSource('barricade-data').setData("lines_181610.geojson");
+  map.getSource('barricade-data').setData("data/lines_181610.geojson");
   create_popup([30.521186, 50.446151], "майданівці займають КМДА");
   show_buildings('181920');
   create_popup([30.528872, 50.447983], "штурм барикади на Інститутській");
@@ -702,13 +698,13 @@ $('#twenty-three').waypoint(function(direction) {
   map.setFilter('fights', new_filter);
   morph("geo181630", ["maidan", "berkut"]);
   show_buildings('182324');
-  map.getSource('barricade-data').setData("lines_181920.json");
+  map.getSource('barricade-data').setData("data/lines_181920.json");
 },{ offset: 150 });
 
 
 $('#twenty-four').waypoint(function(direction) {
   morph("geo181645", ["maidan", "berkut"]);
-  map.getSource('barricade-data').setData("lines_182324.json");
+  map.getSource('barricade-data').setData("data/lines_182324.geojson");
 },{ offset: 50 });
 
 
@@ -728,7 +724,7 @@ $('#twenty-six').waypoint(function(direction) {
 
 $('#twenty-seven').waypoint(function(direction) {
   if (direction === 'down') {
-    play_video("http://texty.org.ua/video/maidan_maps/btrs.mp4", "БТРи таранять барикади"); 
+    play_video("http://texty.org.ua/video/maidan_maps/btrs.mp4", "БТРи таранять барикади", "img/minimap-btrs.png"); 
   } else if (direction === 'up') {
     stop_video(); 
     animate_fly(map_center, zoom_size, 0, 0);
@@ -740,7 +736,7 @@ $('#twenty-eight').waypoint(function(direction) {
   if (direction === 'down') {
     stop_video(); 
   } else if (direction === 'up') {
-    play_video("http://texty.org.ua/video/maidan_maps/btrs.mp4", "БТРи таранять барикади"); 
+    play_video("http://texty.org.ua/video/maidan_maps/btrs.mp4", "БТРи таранять барикади", "img/minimap-btrs.png"); 
   }
   show_killing("2014-02-18 19:00:01", "2014-02-18 19:59:00", false);
   create_popup([30.52468283519492, 50.450512220079837], 'Бондарев, Плеханов');
@@ -783,7 +779,7 @@ $('#thirty-three').waypoint(function(direction) {
 
 $('#thirty-four').waypoint(function(direction) {
   if (direction === 'down') {
-    play_video("http://texty.org.ua/video/maidan_maps/anthem-18.mp4", "Штурм барикад 18 лютого. Відео BABYLON'13"); 
+    play_video("http://texty.org.ua/video/maidan_maps/anthem-18.mp4", "Штурм барикад 18 лютого. Відео BABYLON'13", "img/minimap-anthem.png"); 
   } else if (direction === 'up') {
     stop_video(); 
   }
@@ -794,7 +790,7 @@ $('#thirty-five').waypoint(function(direction) {
   if (direction === 'down') {
     stop_video(); 
   } else if (direction === 'up') {
-    play_video("http://texty.org.ua/video/maidan_maps/anthem-18.mp4", "Штурм барикад 18 лютого. Відео BABYLON'13"); 
+    play_video("http://texty.org.ua/video/maidan_maps/anthem-18.mp4", "Штурм барикад 18 лютого. Відео BABYLON'13", "img/minimap-anthem.png"); 
   }
   show_killing("2014-02-18 23:00:01", "2014-02-18 23:50:00", true);
 },{ offset: 350 });
@@ -823,7 +819,7 @@ $('#thirty-eight').waypoint(function(direction) {
 
 $('#thirty-nine').waypoint(function(direction) {
   if (direction === 'down') {
-    play_video("http://texty.org.ua/video/maidan_maps/unions-fire.mp4", "Порятунок протестувальників з будинку профспілок. Відео BABYLON'13"); 
+    play_video("http://texty.org.ua/video/maidan_maps/unions-fire.mp4", "Порятунок протестувальників з будинку профспілок. Відео BABYLON'13", "img/minimap-unions-fire.png"); 
   } else if (direction === 'up') {
     stop_video(); 
   }
@@ -834,7 +830,7 @@ $('#forty').waypoint(function(direction) {
   if (direction === 'down') {
     stop_video(); 
   } else if (direction === 'up') {
-    play_video("http://texty.org.ua/video/maidan_maps/unions-fire.mp4", "Порятунок протестувальників з будинку профспілок. Відео BABYLON'13"); 
+    play_video("http://texty.org.ua/video/maidan_maps/unions-fire.mp4", "Порятунок протестувальників з будинку профспілок. Відео BABYLON'13", "img/minimap-unions-fire.png"); 
   }
   $(".mapboxgl-popup").fadeOut("slow");
   show_killing("2014-02-19 00:45:01", "2014-02-19 01:00:00", true);
@@ -854,15 +850,15 @@ $('#forty-one').waypoint(function(direction) {
 
 $('#forty-two').waypoint(function(direction) {
   $(".mapboxgl-popup").fadeOut("slow");
-  map.getSource('barricade-data').setData("lines_190300.geojson");
-  morph("geo190300", ["maidan", "berkut"]);  // update barricades here
+  map.getSource('barricade-data').setData("data/lines_190300.geojson");
+  morph("geo190300", ["maidan", "berkut"]);  
   d3.select("#church").attr("opacity", 0);
 },{ offset: 350 });
 
 
 $('#forty-three').waypoint(function(direction) {
    if (direction === 'down') {
-    play_video("http://texty.org.ua/video/maidan_maps/explosions-18.mp4", "Палаючі барикади. Відео BABYLON'13"); 
+    play_video("http://texty.org.ua/video/maidan_maps/explosions-18.mp4", "Палаючі барикади. Відео BABYLON'13", "img/minimap-explosions-18.png"); 
   } else if (direction === 'up') {
     stop_video(); 
   }
@@ -873,7 +869,7 @@ $('#forty-four').waypoint(function(direction) {
    if (direction === 'down') {
     stop_video(); 
   } else if (direction === 'up') {
-    play_video("http://texty.org.ua/video/maidan_maps/explosions-18.mp4", "Палаючі барикади. Відео BABYLON'13"); 
+    play_video("http://texty.org.ua/video/maidan_maps/explosions-18.mp4", "Палаючі барикади. Відео BABYLON'13", "img/minimap-explosions-18.png"); 
   }
 },{ offset: 350 });
 
@@ -888,7 +884,7 @@ $('#forty-five').waypoint(function(direction) {
 
 $('#forty-six').waypoint(function(direction) {
   if (direction === 'down') {
-    play_video("http://texty.org.ua/video/maidan_maps/day-19.mp4", "Ранок на Майдані 19 лютого. Відео BABYLON'13");  
+    play_video("http://texty.org.ua/video/maidan_maps/day-19.mp4", "Ранок на Майдані 19 лютого. Відео BABYLON'13", "img/minimap-day-19.png");  
   } else if (direction === 'up') {
      stop_video();  
     $(".mapboxgl-popup").fadeOut("slow");
@@ -904,7 +900,7 @@ $('#forty-seven').waypoint(function(direction) {
   if (direction === 'down') {
     stop_video();
   } else if (direction === 'up') {
-    play_video("http://texty.org.ua/video/maidan_maps/day-19.mp4", "Ранок на Майдані 19 лютого. Відео BABYLON'13");
+    play_video("http://texty.org.ua/video/maidan_maps/day-19.mp4", "Ранок на Майдані 19 лютого. Відео BABYLON'13", "img/minimap-day-19.png");
   }
 },{ offset: 350 });
 
@@ -927,7 +923,7 @@ $('#forty-nine').waypoint(function(direction) {
 
 $('#fifty').waypoint(function(direction) {
   if (direction === 'down') {
-    play_video("http://texty.org.ua/video/maidan_maps/explosion-20.mp4", "Майдан намагається повернути позиції. Між 8 та 9 ранку 20 січня");  
+    play_video("http://texty.org.ua/video/maidan_maps/explosion-20.mp4", "Майдан намагається повернути позиції. Між 8 та 9 ранку 20 січня", "img/minimap-explosion-20.png");  
   } else if (direction === 'up') {
      stop_video();  
   }
@@ -939,7 +935,7 @@ $('#fifty-one').waypoint(function(direction) {
     stop_video();
   } else if (direction === 'up') {
     morph("geo191400", ["maidan", "berkut"]);
-    play_video("http://texty.org.ua/video/maidan_maps/explosion-20.mp4", "Майдан намагається повернути позиції. Між 8 та 9 ранку 20 січня");  
+    play_video("http://texty.org.ua/video/maidan_maps/explosion-20.mp4", "Майдан намагається повернути позиції. Між 8 та 9 ранку 20 січня", "img/minimap-explosion-20.png");  
   }
 },{ offset: 350 });
 
@@ -948,14 +944,15 @@ $('#fifty-two').waypoint(function(direction) {
   $(".mapboxgl-popup").fadeOut("slow");
   show_killing("2014-02-20 08:50:01", "2014-02-20 08:59:34", false);
   create_popup([30.526180374466549, 50.449740482901902], 'Балюк, Арутюнян');
-  map.getSource('barricade-data').setData("lines_200900.geojson");
+  map.getSource('barricade-data').setData("data/lines_200900.geojson");
   morph("geo200900", ["maidan", "berkut", "chorna-rota"]);
+  d3.select("#chorna-rota").attr("opacity", 0);
 },{ offset: 250 });
 
 
 $('#fifty-three').waypoint(function(direction) {
   $(".mapboxgl-popup").fadeOut("slow");
-  d3.select("#chorna-rota").attr("opacity", 0.8).style("fill", "#000000");
+  d3.select("#chorna-rota").attr("opacity", 0.7).style("fill", "#000000").style("stroke", "#fee391");
   show_killing("2014-02-20 08:59:35", "2014-02-20 09:00:37", true);
   create_popup([30.528248, 50.449275], 'Поява чорної роти');
   if(direction === "up") {
@@ -979,7 +976,7 @@ $('#fifty-five').waypoint(function(direction) {
 
 $('#fifty-six').waypoint(function(direction) {
   if (direction === 'down') {
-    play_video("http://texty.org.ua/video/maidan_maps/retreat-20.mp4", "Відступ силовиків до урядового кварталу ~9:10 20 січня");  
+    play_video("http://texty.org.ua/video/maidan_maps/retreat-20.mp4", "Відступ силовиків до урядового кварталу ~9:10 20 січня", "img/minimap-retreat-20.png");  
   } else if (direction === 'up') {
      stop_video();  
      morph("geo200905", ["maidan", "berkut","chorna-rota"]);
@@ -991,7 +988,7 @@ $('#fifty-seven').waypoint(function(direction) {
   if (direction === 'down') {
     stop_video();
   } else if (direction === 'up') {
-    play_video("http://texty.org.ua/video/maidan_maps/retreat-20.mp4", "Відступ силовиків до урядового кварталу ~9:10 20 січня");  
+    play_video("http://texty.org.ua/video/maidan_maps/retreat-20.mp4", "Відступ силовиків до урядового кварталу ~9:10 20 січня", "img/minimap-retreat-20.png");  
   }
 },{ offset: 350 });
 
@@ -1026,7 +1023,7 @@ $('#sixty-one').waypoint(function(direction) {
 $('#sixty-two').waypoint(function(direction) {
   $(".mapboxgl-popup").fadeOut("slow");
   if (direction === 'down') {
-    play_video("http://texty.org.ua/video/maidan_maps/instytutska-0913.mp4", "Снайпери з жовтими пов'язками стріляють в натовп. ~9:13 20 лютого");  
+    play_video("http://texty.org.ua/video/maidan_maps/instytutska-0913.mp4", "Снайпери з жовтими пов'язками стріляють в натовп. ~9:13 20 лютого", "img/minimap-instytutska-0913.png");  
   } else if (direction === 'up') {
      stop_video();  
   }
@@ -1040,7 +1037,7 @@ $('#sixty-three').waypoint(function(direction) {
   if (direction === 'down') {
     stop_video();
   } else if (direction === 'up') {
-    play_video("http://texty.org.ua/video/maidan_maps/instytutska-0913.mp4", "Снайпери з жовтими пов'язками стріляють в натовп. ~9:13 20 лютого");  
+    play_video("http://texty.org.ua/video/maidan_maps/instytutska-0913.mp4", "Снайпери з жовтими пов'язками стріляють в натовп. ~9:13 20 лютого", "img/minimap-instytutska-0913.png");  
   }
 },{ offset: 350 });
 
@@ -1054,8 +1051,8 @@ $('#sixty-four').waypoint(function(direction) {
 
 
 $('#sixty-five').waypoint(function(direction) { 
-  map.getSource('barricade-data').setData("lines_200921.geojson");
-  morph("geo200921", ["maidan","berkut","chorna-rota"]);  // update barricades
+  map.getSource('barricade-data').setData("data/lines_200921.geojson");
+  morph("geo200921", ["maidan","berkut","chorna-rota"]); 
 },{ offset: 150 });
 
 
@@ -1068,7 +1065,7 @@ $('#sixty-six').waypoint(function(direction) {
 $('#sixty-seven').waypoint(function(direction) {
   $(".mapboxgl-popup").fadeOut("slow");
   if (direction === 'down') {
-    play_video("http://texty.org.ua/video/maidan_maps/instytutska-0922.mp4", "Смерть Андрія Дигдаловича, 09:22:51 20 лютого");  
+    play_video("http://texty.org.ua/video/maidan_maps/instytutska-0922.mp4", "Смерть Андрія Дигдаловича, 09:22:51 20 лютого", "img/minimap-instytutska-0922.png");  
   } else if (direction === 'up') {
      stop_video();  
   }
@@ -1081,7 +1078,7 @@ $('#sixty-eight').waypoint(function(direction) {
   if (direction === 'down') {
     stop_video();
   } else if (direction === 'up') {
-    play_video("http://texty.org.ua/video/maidan_maps/instytutska-0922.mp4", "Смерть Андрія Дигдаловича, 09:22:51 20 лютого");   
+    play_video("http://texty.org.ua/video/maidan_maps/instytutska-0922.mp4", "Смерть Андрія Дигдаловича, 09:22:51 20 лютого", "img/minimap-instytutska-0922.png");   
   }
 },{ offset: 350 });
 
@@ -1132,11 +1129,11 @@ $('#seventy-four').waypoint(function(direction) {
   $(".mapboxgl-popup").fadeOut("slow");
   animate_fly([30.522290,50.450731], zoom_size*1.05, 20, 0);
   if (direction === 'down') {
-     play_video("http://texty.org.ua/video/maidan_maps/instytutska-1001.mp4", "Eпіцентр розстрілів, ~10:01 20 лютого");  
+     play_video("http://texty.org.ua/video/maidan_maps/instytutska-1001.mp4", "Eпіцентр розстрілів, ~10:01 20 лютого", "img/minimap-instytutska-1001.png");  
   } else if (direction === 'up') {
      stop_video();  
      morph("geo200929", ["maidan", "berkut"]);
-     map.getSource('barricade-data').setData("lines_200921.geojson");
+     map.getSource('barricade-data').setData("data/lines_200921.geojson");
      d3.select("#chorna-rota").attr("opacity", 0.8);
      animate_fly([30.527048, 50.448768], zoom_size*1.17, 10, 10);
   }
@@ -1150,13 +1147,13 @@ $('#seventy-five').waypoint(function(direction) {
   if (direction === 'down') {
     stop_video();
   } else if (direction === 'up') {
-    play_video("http://texty.org.ua/video/maidan_maps/instytutska-1001.mp4", "Eпіцентр розстрілів, ~10:01 20 лютого");   
+    play_video("http://texty.org.ua/video/maidan_maps/instytutska-1001.mp4", "Eпіцентр розстрілів, ~10:01 20 лютого", "img/minimap-instytutska-1001.png");   
   }
 },{ offset: 350 });
 
 
 $('#seventy-six').waypoint(function(direction) {
-  map.getSource('barricade-data').setData("lines_201610.geojson");
+  map.getSource('barricade-data').setData("data/lines_201610.geojson");
   morph("geo201610", ["maidan", "berkut"]);
 },{ offset: 350 });
 
@@ -1174,9 +1171,9 @@ $('#seventy-eight').waypoint(function(direction) {
 
 
 $('.disclaimer').waypoint(function(direction) {
-  $("#map").css("opacity", 0.15);
+  $("#map").animate({ opacity: 0.15 }, 200 );
   if(direction === "up") {
-    $("#map").css("opacity", 1);
+    $("#map").animate({ opacity: 1 }, 200 );
   }
 },{ offset: 450 });
 
