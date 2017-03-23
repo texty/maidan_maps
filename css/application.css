@@ -463,9 +463,35 @@ p span.black {
   background: rgba(15, 15, 19, 0.7); }
 
 .summary {
-  margin-top: 15em;
-  font-size: 1.7em;
-  letter-spacing: 2px; }
+  color: #0F0F13;
+  margin-top: 70%;
+  margin-bottom: 70%;
+  font-size: 2.3em;
+  letter-spacing: 2px;
+  text-align: center; }
+  .summary span {
+    background-color: rgba(240, 240, 240, 0.85); }
+
+.legend {
+  border-radius: 3px;
+  top: 40px;
+  font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+  padding: 10px;
+  position: absolute;
+  right: 25px;
+  z-index: 1; }
+
+.legend div span {
+  border-radius: 50%;
+  display: inline-block;
+  height: 10px;
+  margin-right: 5px;
+  width: 10px;
+  filter: blur(0.5px); }
+  .legend div span.barricade-legend {
+    border-radius: 0%;
+    height: 3px;
+    filter: blur(1px); }
 
 /* pudded multiline*/
 .padded-multiline {
