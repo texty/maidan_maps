@@ -352,6 +352,7 @@ svg {
   z-index: 2; }
 
 #video-note {
+  color: #f0f0f0;
   width: 150px;
   height: 100px;
   position: fixed;
