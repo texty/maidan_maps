@@ -74,18 +74,19 @@ svg {
   right: 0; 
   margin-left: auto; 
   margin-right: auto; 
-  margin-top: 10%;
+  margin-top: 13%;
   width: 35%;
   @media #{$brk-narrow} {
     margin-top: 35%;
+    width: 50%;
   }
   @media #{$brk-spnarrow} {
     width: 60%;
-    margin-top: 10%;
+    margin-top: 15%;
   }
   @media #{$brk-xxsnarrow} {
-    width: 60%;
-    margin-top: 20%;
+    width: 80%;
+    margin-top: 25%;
   }
 }
 
@@ -98,6 +99,7 @@ svg {
   }
   @media #{$brk-spnarrow} {
       margin-left: 0px;
+      margin-top: 250%;
   }
 }
 

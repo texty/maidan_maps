@@ -19,6 +19,9 @@ map.scrollZoom.disable();
 map.touchZoomRotate.disable();
 map.doubleClickZoom.disable();
 
+if (screen_width <= 1024) {
+  map.dragPan.disable();
+}
 
 map.on('load', function () {
   
