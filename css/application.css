@@ -16,7 +16,7 @@ a {
   a:link {
     text-decoration: none; }
   a:hover {
-    color: #fee391; }
+    color: #ffffff; }
   a.dotted {
     /*for links*/
     color: #eeeeee;
@@ -152,8 +152,8 @@ ul {
   user-select: none; }
   .fa-twitter:hover,
   .fa-facebook:hover {
-    color: #fee391;
-    border: 1px solid #fee391;
+    color: #ffffff;
+    border: 1px solid #ffffff;
     text-decoration: none; }
 
 /* ======== Footer ======== */
@@ -310,7 +310,7 @@ svg {
   user-select: none;
   cursor: pointer; }
   .mute:hover, .play:hover {
-    border: 1px solid #fee391; }
+    border: 1px solid #ffffff; }
 
 .play {
   margin-right: 15px; }
@@ -320,7 +320,7 @@ svg {
 
 .btn.focus, .btn:focus,
 .btn:hover {
-  color: #fee391; }
+  color: #ffffff; }
 
 .clock-in-da-top {
   display: inline-block;
@@ -357,8 +357,7 @@ svg {
   height: 100px;
   position: fixed;
   bottom: 0px;
-  right: 30px;
-  opacity: 0; }
+  right: 30px; }
 
 #video-map {
   position: fixed;
@@ -371,13 +370,13 @@ svg {
     #video-map {
       display: none; } }
 
-.video-filter {
+#video-filter {
   display: block;
   position: absolute;
   background: black;
   height: 100%;
   width: 100%;
-  opacity: 0.35;
+  opacity: 0;
   z-index: 10; }
 
 video {
@@ -480,6 +479,7 @@ p span.black {
   padding: 10px;
   position: absolute;
   right: 25px;
+  display: none;
   z-index: 1; }
 
 .legend div span {
@@ -546,14 +546,13 @@ p span.black {
 
 div.tooltip {
   position: absolute;
-  width: 100px;
+  width: 130px;
   font-size: 11px;
   pointer-events: none;
   background: rgba(238, 238, 238, 0.8);
   padding: 5px;
   border-radius: 3px;
   color: #3A3F4A;
-  text-align: center;
   z-index: 100; }
 
 .fight-path {

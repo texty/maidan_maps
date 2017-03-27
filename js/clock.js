@@ -71,7 +71,7 @@
 
             $('html, body').animate({
                 scrollTop: episode_offsets[epi] - top_margin
-            }, 1500);
+            }, 3000);
         }
 
         $('.clock-in-da-top').on('episode-changed', function(e, epi){
@@ -106,9 +106,9 @@
 
     $('#two').waypoint(function(direction) {
         if (direction === 'down') {
-            $(".mute-btn-wrapper").fadeIn(400);
+            $(".mute-btn-wrapper, .legend").fadeIn(400);
         } else if (direction === 'up') {
-            $(".mute-btn-wrapper").fadeOut(400);
+            $(".mute-btn-wrapper, .legend").fadeOut(400);
         }
     },{ offset: 150 });
 

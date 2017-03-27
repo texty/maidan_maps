@@ -53,7 +53,7 @@ map.on('load', function () {
         }
     });
 
-  
+
   var buildingsData = 'data/maidan_buildings.geojson';
   map.addSource('buildingsData', { type: 'geojson', data: buildingsData });
   
@@ -113,7 +113,7 @@ function createPopup(coors, text) {
     .setLngLat(coors)
     .setHTML('<div>' + text + '</div>')
     .addTo(map);
-  $(".mapboxgl-popup-content").animate({ opacity: 0.7 }, 500 );
+  $(".mapboxgl-popup-content").animate({ opacity: 0.8 }, 500 );
 }
 
 
@@ -132,7 +132,6 @@ function animateFly(target, zoom, bearing, pitch){
         }
     });
 }
-
 
 
 // show particular buildings
@@ -175,7 +174,7 @@ var filter = defs.append("filter")
     .attr("id","glow");
 
 filter.append("feGaussianBlur")
-    .attr("stdDeviation","1.5")
+    .attr("stdDeviation","1")
     .attr("result","coloredBlur");
 
 var feMerge = filter.append("feMerge");
@@ -186,6 +185,13 @@ feMerge.append("feMergeNode")
 feMerge.append("feMergeNode")
     .attr("in","SourceGraphic");
 
+
+// more intense blur for chorna rota
+var filter_polygon = svg.append("defs")
+  .append("filter")
+  .attr("id", "blur")
+  .append("feGaussianBlur")
+  .attr("stdDeviation", 4);
 
 
 // loading main polygons 
@@ -209,7 +215,8 @@ d3.json("data/polygons.json", function(err, geodata) {
      })
      .attr("opacity", function(d) {
        return d.properties.opacity;
-     });
+     })
+     .style("filter", "url(#glow)");
 
   updatePosition(geometries);
 
@@ -237,6 +244,7 @@ d3.json("data/all-killed.geojson", function(err, geodata) {
       .data(geometries)
       .enter()
       .append("circle")
+      .attr("class", "killed")
       .style("filter", "url(#glow)")
       .attr("fill", function(d) {
         if (d.properties.tabir == "maidan" || d.properties.tabir == "civil") { return "#89ADD2"}
@@ -250,16 +258,20 @@ d3.json("data/all-killed.geojson", function(err, geodata) {
       .attr("stroke-width", 1.5)
       .attr("opacity", 0)
       .on("mouseover", function(d) {
-        d3.select(this).attr("r", 10);
+        d3.select(this).attr("r", 12);
         div.transition()
           .duration(200)
           .style("opacity", .9);
-        div.html(d.properties.name)
-          .style("left", (d3.event.pageX) + "px")
+        div.html("<b>" + d.properties.name + "</b>" + "<br>" + "<b>Загинув(ла):</b> " + d.properties.tooltip + "<br>" + "<b>Місце смерті: </b>" + d.properties.place_cert)
+          .style("left", function() {
+            if (d3.event.pageX >= screen_width - 130 ) {
+              return d3.event.pageX - 130 + "px"
+            } else  { return d3.event.pageX + "px"}
+          })
           .style("top", (d3.event.pageY - 28) + "px");
        })
      .on("mouseout", function(d) {
-        d3.select(this).attr("r", 5);
+        d3.select(this).attr("r", 7);
         div.transition()
           .duration(500)
           .style("opacity", 0);
@@ -284,15 +296,18 @@ d3.json("data/all-killed.geojson", function(err, geodata) {
 
 
 
-// hide  killings when scrolling backwards
+//hide  killings when scrolling backwards
 var parseTime = d3.timeParse("%Y-%m-%d %H:%M:%S");
 
 function hideKilling(date) {
   d3.selectAll("circle")
     .filter(function(d) { return parseTime(d.properties.time) > parseTime(date) })
     .attr("opacity", 0);
-}
 
+  d3.selectAll("circle")
+    .filter(function(d) { return parseTime(d.properties.time) < parseTime(date) })
+    .attr("opacity", 0.45);
+}
 
 
 //filter dots
@@ -302,17 +317,17 @@ function showKilling(date1, date2, condition) {
 
   d3.selectAll("circle")
     .filter(function(d) { return parseTime(d.properties.time) >= parseTime(date1) && parseTime(d.properties.time) <= parseTime(date2) })
-    .attr("opacity", 0.5)
+    .attr("opacity", 0.9)
     .attr("r", "10px")
     .transition()
     .duration(1500)
-    .attr("r", "5px")
+    .attr("r", 7)
     .transition()
     .duration(1000)
-    .attr("r", "10px")
+    .attr("r", 12)
     .transition()
     .duration(1500)
-    .attr("r", "5px")
+    .attr("r", 7)
     .each(function(d) {
       if (condition) {
         var full_name = d.properties.name;
@@ -452,13 +467,13 @@ function stopVideo() {
 // custom on scroll interaction
 $('#one').waypoint(function(direction) {
   stopVideo();
-  $(".mapboxgl-popup").fadeOut("slow");
+  $(".mapboxgl-popup").remove();
   showKilling("2014-01-01 14:00:00","2014-01-23 14:00:00", false);
   createPopup([30.5299169, 50.4505057], 'Нігоян, Сеник, Жизневський');
   createPopup([30.524515,50.449412], 'територія Майдану');
   createPopup([30.536166,50.446939], 'територія силовиків і Антимайдану');
   if (direction === 'up') {
-      playVideo("http://texty.org.ua/video/maidan_maps/maidan-bg-blacked.mp4")
+      playVideo("http://texty.org.ua/video/maidan_maps/maidan-bg-blacked.mp4", "Відео Влада Казакова")
       animateFly(map_center, zoom_size, 0, 0);
       map.setPaintProperty('barricade', 'line-opacity', 0);
   }
@@ -466,7 +481,7 @@ $('#one').waypoint(function(direction) {
 
 
 $('#two').waypoint(function(direction) {
-  $(".mapboxgl-popup").fadeOut("slow");
+  $(".mapboxgl-popup").remove();
   createPopup([30.528463,50.451366], 'барикади');
   createPopup([30.535909,50.447964], 'шеренги силовиків');
   if (direction === 'down') {
@@ -482,7 +497,7 @@ $('#two').waypoint(function(direction) {
 $('#three').waypoint(function(direction) {
   if (direction === 'down') {
     morph("geo181012", ["maidan"]);
-    $(".mapboxgl-popup").fadeOut("slow"); 
+    $(".mapboxgl-popup").remove(); 
     window.setTimeout(function(){
       d3.select("#mariinka").transition().duration(500).attr("opacity", 0.2);
       attackLine("#9ebcda", ["protestline"]);
@@ -516,7 +531,7 @@ $('#five').waypoint(function(direction) {
 
 
 $('#six').waypoint(function(direction) {
-  $(".mapboxgl-popup, .fight-path").fadeOut("slow");
+  $(".fight-path, .mapboxgl-popup").remove();
   map.setFilter('fights', ['<=', 'time', 1140 ]);
   showKilling("2014-02-18 10:00:00","2014-02-18 12:10:00", true);
   showBuildings('regions_office');
@@ -527,14 +542,15 @@ $('#six').waypoint(function(direction) {
 $('#seven').waypoint(function(direction) {
   showBuildings('181012');
   if (direction === 'down') {
-    $("#hint, #video-note, #video-map").animate({ opacity: 1 }, 300 );
-    playVideo("http://texty.org.ua/video/maidan_maps/mariinka-start.mp4", "Початок протистояння в Маріїнському парк", "img/minimap-mariinka-start.png");
+    $("#hint, #video-map").animate({ opacity: 1 }, 300 );
+    $("#video-filter").animate({ opacity: 0.35 }, 300 );
+    playVideo("http://texty.org.ua/video/maidan_maps/mariinka-start.mp4", "Початок протистояння в Маріїнському парк. Відео Денис Артемєв", "img/minimap-mariinka-start.png");
     window.setTimeout(function(){
       $("#hint").animate({ opacity: 0 }, 3000 );
     },7000); 
   } else if (direction === 'up') {
     stopVideo();
-    $("#hint, #video-note, #video-map").animate({ opacity: 0 }, 300 );
+    $("#hint, #video-map, #video-filter").animate({ opacity: 0 }, 300 );
   }
 },{ offset: 50 });
 
@@ -544,13 +560,13 @@ $('#eight').waypoint(function(direction) {
     stopVideo();
     $("#hint").animate({ opacity: 0 }, 300 );
   } else if (direction === 'up') {
-    playVideo("http://texty.org.ua/video/maidan_maps/mariinka-start.mp4", "Початок протистояння в Маріїнському парк", "img/minimap-mariinka-start.png");
+    playVideo("http://texty.org.ua/video/maidan_maps/mariinka-start.mp4", "Початок протистояння в Маріїнському парк. Відео Денис Артемєв", "img/minimap-mariinka-start.png");
   }
 },{ offset: 250 });
 
 
 $('#nine').waypoint(function(direction) {
-  $(".mapboxgl-popup, .fight-path").fadeOut("slow");
+  $(".fight-path, .mapboxgl-popup").remove();
   morph("geo181320", ["maidan", "mariinka"]);
   attackLine("#650149", ["lypska", "oplot"]);
   createPopup([30.543557, 50.443881], 'атака Оплоту');
@@ -563,14 +579,14 @@ $('#nine').waypoint(function(direction) {
 
 $('#ten').waypoint(function(direction) {
   morph("geo181340", ["maidan", "mariinka"]);
-  $(".mapboxgl-popup, #oplot").fadeOut("slow");
+  $(".mapboxgl-popup, #oplot").remove();
   attackLine("#650149", ["pidkriplennia"]);
   createPopup([30.535995, 50.444863], 'розділена колона мітингувальників');
 },{ offset: 250 });
 
 
 $('#eleven').waypoint(function(direction) {
-  $(".mapboxgl-popup").fadeOut("slow");
+  $(".mapboxgl-popup").remove();
   showKilling("2014-02-18 12:10:01", "2014-02-18 14:00:00", true);
   var new_filter = [ "in", 'time', 1012, 1400 ]
   map.setFilter('fights', new_filter);
@@ -578,7 +594,7 @@ $('#eleven').waypoint(function(direction) {
 
 
 $('#twelve').waypoint(function(direction) {
-  $(".mapboxgl-popup").fadeOut("slow");
+  $(".mapboxgl-popup").remove();
   morph("geo181415", ["mariinka"]);
   attackLine("#650149", ["mariinka-titushky", "mariinka-vv"]);
   createPopup([30.541488,50.445151], "м'ясорубка в Маріїнському парку");
@@ -597,7 +613,7 @@ $('#thirteen').waypoint(function(direction) {
 
 
 $('#fourteen').waypoint(function(direction) {
-  $(".mapboxgl-popup, .fight-path").fadeOut("slow");
+  $(".mapboxgl-popup, .fight-path").remove();
   showKilling("2014-02-18 14:00:01", "2014-02-18 14:15:00", true);
   if (direction === 'down') {
     stopVideo();
@@ -609,7 +625,7 @@ $('#fourteen').waypoint(function(direction) {
 
 $('#fifteen').waypoint(function(direction) {
   if (direction === 'down') {
-    playVideo("http://texty.org.ua/video/maidan_maps/gas-kriposnyi.mp4", "Леонід Бібік намагається розчистити дорогу за допомогою міліцейського ГАЗу", "img/minimap-gas-kriposnyi.png"); 
+    playVideo("http://texty.org.ua/video/maidan_maps/gas-kriposnyi.mp4", "Леонід Бібік намагається розчистити дорогу за допомогою міліцейського ГАЗу. Відео Павла Кучера", "img/minimap-gas-kriposnyi.png"); 
   } else if (direction === 'up') {
     stopVideo();
   }
@@ -621,13 +637,13 @@ $('#sixteen').waypoint(function(direction) {
   if (direction === 'down') {
     stopVideo();
   } else if (direction === 'up') {
-    playVideo("http://texty.org.ua/video/maidan_maps/gas-kriposnyi.mp4", "Леонід Бібік намагається розчистити дорогу за допомогою міліцейського ГАЗу", "img/minimap-gas-kriposnyi.png"); 
+    playVideo("http://texty.org.ua/video/maidan_maps/gas-kriposnyi.mp4", "Леонід Бібік намагається розчистити дорогу за допомогою міліцейського ГАЗу. Відео Павла Кучера", "img/minimap-gas-kriposnyi.png"); 
   }
 },{ offset: 350 });
 
 
 $('#seventeen').waypoint(function(direction) {
-  $(".mapboxgl-popup, .fight-path").fadeOut("slow");
+  $(".mapboxgl-popup, .fight-path").remove();
   morph("geo181505", ["mariinka"]);
   showKilling("2014-02-18 14:31:00", "2014-02-18 15:10:00", true);
   var new_filter = [ "in", 'time', 1012, 1410 ]
@@ -640,7 +656,7 @@ $('#seventeen').waypoint(function(direction) {
 
 
 $('#eighteen').waypoint(function(direction) {
-  $(".mapboxgl-popup").fadeOut("slow");
+  $(".mapboxgl-popup").remove();
   d3.select("#mariinka").transition().duration(500).attr("opacity", 0);
   var new_filter = [ "in", 'time', 1012 ]
   map.setFilter('fights', new_filter);
@@ -655,7 +671,7 @@ $('#eighteen').waypoint(function(direction) {
 
 $('#nineteen').waypoint(function(direction) {
   if (direction === 'down') {
-    playVideo("http://texty.org.ua/video/maidan_maps/shovkovychna.mp4", "Протистояння на перехресті Інститутська-Шовковична", "img/minimap-shovkovychna.png"); 
+    playVideo("http://texty.org.ua/video/maidan_maps/shovkovychna.mp4", "Протистояння на перехресті Інститутська-Шовковична. Відео Максима Кудимеця", "img/minimap-shovkovychna.png"); 
   } else if (direction === 'up') {
     stopVideo(); 
   }
@@ -666,34 +682,33 @@ $('#twenty').waypoint(function(direction) {
   if (direction === 'down') {
     stopVideo(); 
   } else if (direction === 'up') {
-    playVideo("http://texty.org.ua/video/maidan_maps/shovkovychna.mp4", "Протистояння на перехресті Інститутська-Шовковична", "img/minimap-shovkovychna.png"); 
+    playVideo("http://texty.org.ua/video/maidan_maps/shovkovychna.mp4", "Протистояння на перехресті Інститутська-Шовковична. Відео Максима Кудимеця", "img/minimap-shovkovychna.png"); 
   }
 },{ offset: 350 });
 
 
 $('#twenty-one').waypoint(function(direction) {
-  $(".mapboxgl-popup, .fight-path").fadeOut("slow");
+  $(".mapboxgl-popup, .fight-path").remove();
   morph("geo181610", ["maidan", "berkut"]);
   map.getSource('barricade-data').setData("data/lines_181610.geojson");
   createPopup([30.521186, 50.446151], "майданівці займають КМДА");
   showBuildings('181920');
   createPopup([30.528872, 50.447983], "штурм барикади на Інститутській");
-  var new_filter = [ "in", 'time', 1610 ]
-  map.setFilter('fights', new_filter);
+  map.setFilter('fights', [ "in", 'time', 1610 ]);
 },{ offset: 150 });
 
 
 $('#twenty-two').waypoint(function(direction) {
-  $(".mapboxgl-popup").fadeOut("slow");
+  $(".mapboxgl-popup").remove();
   showKilling("2014-02-18 16:00:01","2014-02-18 16:15:00", false);
   createPopup([30.5289244, 50.4480053], 'Дворянець, Хурція');
+  createPopup([30.515834, 50.445087], 'Зайко');
 },{ offset: 150 });
 
 
 $('#twenty-three').waypoint(function(direction) {
-  $(".mapboxgl-popup").fadeOut("slow");
-  var new_filter = [ "in", 'time', 2100 ]
-  map.setFilter('fights', new_filter);
+  $(".mapboxgl-popup").remove();
+  map.setFilter('fights', [ "in", 'time', 2100 ]);
   morph("geo181630", ["maidan", "berkut"]);
   showBuildings('182324');
   map.getSource('barricade-data').setData("data/lines_181920.json");
@@ -703,39 +718,47 @@ $('#twenty-three').waypoint(function(direction) {
 $('#twenty-four').waypoint(function(direction) {
   morph("geo181645", ["maidan", "berkut"]);
   map.getSource('barricade-data').setData("data/lines_182324.geojson");
-},{ offset: 50 });
+},{ offset: 150 });
 
 
 $('#twenty-five').waypoint(function(direction) {
-  morph("geo181645", ["maidan", "berkut"]);
-  showKilling("2014-02-18 16:15:01", "2014-02-18 17:20:00", false);
+  showKilling("2014-02-18 16:15:01", "2014-02-18 17:25:00", false);
   createPopup([30.5258614, 50.4514723], 'Третяк, Теплюк');
+  createPopup([30.5254161, 50.4520734], 'Прохорчук');
+},{ offset: 150 });
+
+
+$('#episode-iii').waypoint(function(direction) {
+  if (direction === "up") {
+    morph("geo181645", ["maidan", "berkut"]);
+  }
 },{ offset: 50 });
 
 
 $('#twenty-six').waypoint(function(direction) {
-  morph("geo181645", ["maidan", "berkut"]);
-  $(".mapboxgl-popup").fadeOut("slow");
-  showKilling("2014-02-18 17:20:01", "2014-02-18 19:00:00", true);
-},{ offset: 50 });
+  $(".mapboxgl-popup").remove();
+  showKilling("2014-02-18 17:25:01", "2014-02-18 19:00:00", true);
+},{ offset: 250 });
 
 
 $('#twenty-seven').waypoint(function(direction) {
   if (direction === 'down') {
-    playVideo("http://texty.org.ua/video/maidan_maps/btrs.mp4", "БТРи таранять барикади", "img/minimap-btrs.png"); 
+    playVideo("http://texty.org.ua/video/maidan_maps/btrs.mp4", "БТРи таранять барикади. Відео Accidents news", "img/minimap-btrs.png"); 
   } else if (direction === 'up') {
     stopVideo(); 
     animateFly(map_center, zoom_size, 0, 0);
   }
-},{ offset: 100 });
+},{ offset: 50 });
 
 
 $('#twenty-eight').waypoint(function(direction) {
   if (direction === 'down') {
     stopVideo(); 
   } else if (direction === 'up') {
-    playVideo("http://texty.org.ua/video/maidan_maps/btrs.mp4", "БТРи таранять барикади", "img/minimap-btrs.png"); 
+    playVideo("http://texty.org.ua/video/maidan_maps/btrs.mp4", "БТРи таранять барикади. Відео Accidents news", "img/minimap-btrs.png"); 
   }
+  $(".mapboxgl-popup").remove();
+  animateFly([30.522290,50.450731], zoom_size*1.07, 20, 0);
   showKilling("2014-02-18 19:00:01", "2014-02-18 19:59:00", false);
   createPopup([30.52468283519492, 50.450512220079837], 'Бондарев, Плеханов');
   createPopup([30.5243795, 50.450093], 'Брезденюк');
@@ -743,36 +766,35 @@ $('#twenty-eight').waypoint(function(direction) {
 
 
 $('#twenty-nine').waypoint(function(direction) { 
-  $(".mapboxgl-popup").fadeOut("slow");
+  $(".mapboxgl-popup").remove();
   showKilling("2014-02-18 20:00:00", "2014-02-18 20:10:00", true);
-  animateFly([30.522290,50.450731], zoom_size*1.05, 20, 0);
 },{ offset: 350 });
 
 
 $('#thirty').waypoint(function(direction) {
-  $(".mapboxgl-popup").fadeOut("slow");
+  $(".mapboxgl-popup").remove();
   showKilling("2014-02-18 20:10:01", "2014-02-18 21:30:00", true);
 },{ offset: 50 });
 
 
 $('#thirty-one').waypoint(function(direction) {
-  $(".mapboxgl-popup").fadeOut("slow");
+  $(".mapboxgl-popup").remove();
   showKilling("2014-02-18 21:30:01","2014-02-18 22:00:00", true);
 },{ offset: 50 });
 
 
 $('#thirty-two').waypoint(function(direction) {
-  $(".mapboxgl-popup").fadeOut("slow");
+  $(".mapboxgl-popup").remove();
   showKilling("2014-02-18 22:00:01","2014-02-18 22:30:00", true);
 },{ offset: 50 });
 
 
 
 $('#thirty-three').waypoint(function(direction) {
-  $(".mapboxgl-popup").fadeOut("slow");
+  $(".mapboxgl-popup").remove();
   showKilling("2014-02-18 22:30:01","2014-02-18 23:00:00", false);
   createPopup([30.5247509, 50.4505398], 'Кульчицький, Швець, Бойків');
-},{ offset: 50 });
+},{ offset: 100 });
 
 
 $('#thirty-four').waypoint(function(direction) {
@@ -790,27 +812,30 @@ $('#thirty-five').waypoint(function(direction) {
   } else if (direction === 'up') {
     playVideo("http://texty.org.ua/video/maidan_maps/anthem-18.mp4", "Штурм барикад 18 лютого. Відео BABYLON'13", "img/minimap-anthem.png"); 
   }
+  $(".mapboxgl-popup").remove();
   showKilling("2014-02-18 23:00:01", "2014-02-18 23:50:00", true);
 },{ offset: 350 });
 
 
 $('#thirty-six').waypoint(function(direction) {
-  $(".mapboxgl-popup").fadeOut("slow");
+  $(".mapboxgl-popup").remove();
   showKilling("2014-02-18 23:50:01","2014-02-18 23:55:00", true);
+  if (direction === "up") {
+    map.setFilter('fights', [ "in", 'time', 2100 ]);
+  }
 },{ offset: 100 });
 
 
 $('#thirty-seven').waypoint(function(direction) {
-  $(".mapboxgl-popup").fadeOut("slow");
+  $(".mapboxgl-popup").remove();
   showKilling("2014-02-18 23:55:01", "2014-02-19 00:15:00", true);
-  createPopup([30.524533, 50.450460], 'пожежа у Будинку профспілок');
-  var new_filter = [ "in", 'time', 2100, 190100 ]
-  map.setFilter('fights', new_filter);
+  createPopup([30.524737, 50.450870], 'пожежа у Будинку профспілок');
+  map.setFilter('fights', [ "in", 'time', 2100, 190100 ]);
 },{ offset: 100 });
 
 
 $('#thirty-eight').waypoint(function(direction) {
-  $(".mapboxgl-popup").fadeOut("slow");
+  $(".mapboxgl-popup").remove();
   showKilling("2014-02-19 00:15:01", "2014-02-19 00:45:00", true);
 },{ offset: 100 });
 
@@ -820,6 +845,7 @@ $('#thirty-nine').waypoint(function(direction) {
     playVideo("http://texty.org.ua/video/maidan_maps/unions-fire.mp4", "Порятунок протестувальників з будинку профспілок. Відео BABYLON'13", "img/minimap-unions-fire.png"); 
   } else if (direction === 'up') {
     stopVideo(); 
+    animateFly([30.523568,50.449962], zoom_size*1.05, 10, 10);
   }
 },{ offset: 100 });
 
@@ -830,13 +856,14 @@ $('#forty').waypoint(function(direction) {
   } else if (direction === 'up') {
     playVideo("http://texty.org.ua/video/maidan_maps/unions-fire.mp4", "Порятунок протестувальників з будинку профспілок. Відео BABYLON'13", "img/minimap-unions-fire.png"); 
   }
-  $(".mapboxgl-popup").fadeOut("slow");
+  $(".mapboxgl-popup").remove();
+  animateFly([30.523568,50.449962], zoom_size*1.1, 10, 10);
   showKilling("2014-02-19 00:45:01", "2014-02-19 01:00:00", true);
 },{ offset: 350 });
 
 
 $('#forty-one').waypoint(function(direction) {
-  $(".mapboxgl-popup").fadeOut("slow");
+  $(".mapboxgl-popup").remove();
   showKilling("2014-02-19 01:00:01", "2014-02-19 02:10:00", false);
   createPopup([30.524320854186136, 50.450851057984273], 'Цвігун, Топій, Клітинський');
   if (direction == "up") {
@@ -847,7 +874,6 @@ $('#forty-one').waypoint(function(direction) {
 
 
 $('#forty-two').waypoint(function(direction) {
-  $(".mapboxgl-popup").fadeOut("slow");
   map.getSource('barricade-data').setData("data/lines_190300.geojson");
   morph("geo190300", ["maidan", "berkut"]);  
   d3.select("#church").attr("opacity", 0);
@@ -859,11 +885,14 @@ $('#forty-three').waypoint(function(direction) {
     playVideo("http://texty.org.ua/video/maidan_maps/explosions-18.mp4", "Палаючі барикади. Відео BABYLON'13", "img/minimap-explosions-18.png"); 
   } else if (direction === 'up') {
     stopVideo(); 
+    map.setFilter('fights', [ "in", 'time', 2100, 190100 ]);
   }
 },{ offset: 10 });
 
 
 $('#forty-four').waypoint(function(direction) {
+   morph("geo190300", ["maidan", "berkut"]); 
+   map.setFilter('fights', [ "in", 'time', 2100, 190100, 190500 ]); 
    if (direction === 'down') {
     stopVideo(); 
   } else if (direction === 'up') {
@@ -873,19 +902,22 @@ $('#forty-four').waypoint(function(direction) {
 
 
 $('#forty-five').waypoint(function(direction) {
+  morph("geo190300", ["maidan", "berkut"]);
   if (direction === 'up') {
-    $(".mapboxgl-popup").fadeOut("slow");
+    $(".mapboxgl-popup").remove();
     showBuildings('182324');
+    map.setFilter('fights', [ "in", 'time', 2100, 190100, 190500 ]); 
   }
-},{ offset: 250 });
+},{ offset: 150 });
 
 
 $('#forty-six').waypoint(function(direction) {
   if (direction === 'down') {
+    map.setFilter('fights', [ "in", 'time', 2100 ]);
     playVideo("http://texty.org.ua/video/maidan_maps/day-19.mp4", "Ранок на Майдані 19 лютого. Відео BABYLON'13", "img/minimap-day-19.png");  
   } else if (direction === 'up') {
      stopVideo();  
-    $(".mapboxgl-popup").fadeOut("slow");
+    $(".mapboxgl-popup").remove();
     morph("geo190300", ["maidan", "berkut"]);
   }
   showBuildings('191400');
@@ -894,7 +926,7 @@ $('#forty-six').waypoint(function(direction) {
 
 $('#forty-seven').waypoint(function(direction) {
   morph("geo191400", ["maidan"]);
-  createPopup([30.525266, 50.447507], 'Мітингувальники захопили консерваторію');
+  createPopup([30.525384, 50.448231], 'Мітингувальники захопили консерваторію');
   if (direction === 'down') {
     stopVideo();
   } else if (direction === 'up') {
@@ -903,25 +935,31 @@ $('#forty-seven').waypoint(function(direction) {
 },{ offset: 350 });
 
 
+$('#episode-v').waypoint(function(direction) {
+  if (direction === "up") {
+    morph("geo191400", ["maidan"]);
+  }
+},{ offset: 50 });
+
+
 $('#forty-eight').waypoint(function(direction) {
-  $(".mapboxgl-popup").fadeOut("slow");
+  $(".mapboxgl-popup").remove();
   showKilling("2014-02-19 02:10:01", "2014-02-20 08:00:00", true);
   if (direction === "up"){
-    animateFly([30.522290,50.450731], zoom_size*1.05, 20, 0);
+     morph("geo191400", ["maidan"]);
   }
 },{ offset: 250 });
 
 
 $('#forty-nine').waypoint(function(direction) {
-  $(".mapboxgl-popup").fadeOut("slow");
-  animateFly([30.523568,50.449962], zoom_size*1.1, 10, 10);
+  $(".mapboxgl-popup").remove();
   showKilling("2014-02-20 08:00:01", "2014-02-20 08:50:00", true);
 },{ offset: 250 });
 
 
 $('#fifty').waypoint(function(direction) {
   if (direction === 'down') {
-    playVideo("http://texty.org.ua/video/maidan_maps/explosion-20.mp4", "Майдан намагається повернути позиції. Між 8 та 9 ранку 20 січня", "img/minimap-explosion-20.png");  
+    playVideo("http://texty.org.ua/video/maidan_maps/explosion-20.mp4", "Майдан намагається повернути позиції. Між 8 та 9 ранку 20 січня. Відео Maidan18-20 History", "img/minimap-explosion-20.png");  
   } else if (direction === 'up') {
      stopVideo();  
   }
@@ -933,14 +971,15 @@ $('#fifty-one').waypoint(function(direction) {
     stopVideo();
   } else if (direction === 'up') {
     morph("geo191400", ["maidan", "berkut"]);
-    playVideo("http://texty.org.ua/video/maidan_maps/explosion-20.mp4", "Майдан намагається повернути позиції. Між 8 та 9 ранку 20 січня", "img/minimap-explosion-20.png");  
+    playVideo("http://texty.org.ua/video/maidan_maps/explosion-20.mp4", "Майдан намагається повернути позиції. Між 8 та 9 ранку 20 січня. Відео Maidan18-20 History", "img/minimap-explosion-20.png");  
   }
 },{ offset: 350 });
 
 
 $('#fifty-two').waypoint(function(direction) {
-  $(".mapboxgl-popup").fadeOut("slow");
+  $(".mapboxgl-popup").remove();
   showKilling("2014-02-20 08:50:01", "2014-02-20 08:59:34", false);
+  map.setFilter('fights', [ "in", 'time', 2100, 200900 ]);
   createPopup([30.526180374466549, 50.449740482901902], 'Балюк, Арутюнян');
   map.getSource('barricade-data').setData("data/lines_200900.geojson");
   morph("geo200900", ["maidan", "berkut", "chorna-rota"]);
@@ -949,8 +988,8 @@ $('#fifty-two').waypoint(function(direction) {
 
 
 $('#fifty-three').waypoint(function(direction) {
-  $(".mapboxgl-popup").fadeOut("slow");
-  d3.select("#chorna-rota").attr("opacity", 0.5).style("fill", "#000000").style("stroke", "#fee391");
+  $(".mapboxgl-popup").remove();
+  d3.select("#chorna-rota").attr("opacity", 0.9).style("fill", "#000000").style("stroke", "#fee391").style("filter", "url(#blur)");
   showKilling("2014-02-20 08:59:35", "2014-02-20 09:00:37", true);
   createPopup([30.528248, 50.449275], 'Поява чорної роти');
   if(direction === "up") {
@@ -960,16 +999,16 @@ $('#fifty-three').waypoint(function(direction) {
 
 
 $('#fifty-four').waypoint(function(direction) {
-  $(".mapboxgl-popup").fadeOut("slow");
+  $(".mapboxgl-popup").remove();
   morph("geo200905", ["maidan", "berkut","chorna-rota"]);
   showKilling("2014-02-20 09:00:38", "2014-02-20 09:05:00", true);
 },{ offset: 250 });
 
 
 $('#fifty-five').waypoint(function(direction) {
-  $(".mapboxgl-popup").fadeOut("slow");
+  $(".mapboxgl-popup").remove();
   showKilling("2014-02-20 09:05:01", "2014-02-20 09:07:16", true);
-},{ offset: 150 });
+},{ offset: 50 });
 
 
 $('#fifty-six').waypoint(function(direction) {
@@ -993,22 +1032,27 @@ $('#fifty-seven').waypoint(function(direction) {
 
 $('#fifty-eight').waypoint(function(direction) {
   morph("geo200910", ["maidan", "berkut","chorna-rota"]);
-  $(".mapboxgl-popup").fadeOut("slow");
+  $(".mapboxgl-popup").remove();
   showKilling("2014-02-20 09:07:17", "2014-02-20 09:08:15", true);
 },{ offset: 250 });
 
 
 $('#fifty-nine').waypoint(function(direction) {
-  $(".mapboxgl-popup").fadeOut("slow");
+  $(".mapboxgl-popup").remove();
   showKilling("2014-02-20 09:08:16", "2014-02-20 09:08:34", true);
+  if (direction === "up") {
+    map.setFilter('fights', [ "in", 'time', 2100, 200900 ]);
+  }
 },{ offset: 250 });
 
 
 $('#sixty').waypoint(function(direction) {
-  $(".mapboxgl-popup").fadeOut("slow");
+  $(".mapboxgl-popup").remove();
   morph("geo200910", ["chorna-rota"]);
+  map.setFilter('fights', [ "in", 'time', 2100, 200900, 200910 ]);
   showKilling("2014-02-20 09:08:35", "2014-02-20 09:11:55", false);
   createPopup([30.527103533328003, 50.449944021296972], 'Коцюба, Братушка');
+  createPopup([30.526766501661189, 50.449829978298638], 'Ільків');
 },{ offset: 150 });
 
 
@@ -1017,9 +1061,8 @@ $('#sixty-one').waypoint(function(direction) {
 },{ offset: 150 });
 
 
-
 $('#sixty-two').waypoint(function(direction) {
-  $(".mapboxgl-popup").fadeOut("slow");
+  $(".mapboxgl-popup").remove();
   if (direction === 'down') {
     playVideo("http://texty.org.ua/video/maidan_maps/instytutska-0913.mp4", "Снайпери з жовтими пов'язками стріляють в натовп. ~9:13 20 лютого", "img/minimap-instytutska-0913.png");  
   } else if (direction === 'up') {
@@ -1029,8 +1072,8 @@ $('#sixty-two').waypoint(function(direction) {
 
 
 $('#sixty-three').waypoint(function(direction) {
+  $(".mapboxgl-popup").remove();
   morph("geo200916", ["chorna-rota"]);
-  $(".mapboxgl-popup").fadeOut("slow");
   showKilling("2014-02-20 09:11:56", "2014-02-20 09:15:40", true);
   if (direction === 'down') {
     stopVideo();
@@ -1041,7 +1084,7 @@ $('#sixty-three').waypoint(function(direction) {
 
 
 $('#sixty-four').waypoint(function(direction) {
-  $(".mapboxgl-popup").fadeOut("slow");
+  $(".mapboxgl-popup").remove();
   morph("geo200919", ["maidan","berkut","chorna-rota"]);
   showKilling("2014-02-20 09:15:41", "2014-02-20 09:18:08", false);
   createPopup([30.527153468447487, 50.449888581575465], 'Аксенін, Мойсей, Тарасюк');
@@ -1055,91 +1098,100 @@ $('#sixty-five').waypoint(function(direction) {
 
 
 $('#sixty-six').waypoint(function(direction) {
-  $(".mapboxgl-popup").fadeOut("slow");
+  $(".mapboxgl-popup").remove();
   showKilling("2014-02-20 09:18:09", "2014-02-20 09:21:59", true);
 },{ offset: 150 });
 
 
 $('#sixty-seven').waypoint(function(direction) {
-  $(".mapboxgl-popup").fadeOut("slow");
+  $(".mapboxgl-popup").remove();
   if (direction === 'down') {
-    playVideo("http://texty.org.ua/video/maidan_maps/instytutska-0922.mp4", "Смерть Андрія Дигдаловича, 09:22:51 20 лютого", "img/minimap-instytutska-0922.png");  
+    playVideo("http://texty.org.ua/video/maidan_maps/instytutska-0922.mp4", "Смерть Андрія Дигдаловича, 09:22:51 20 лютого. Відео BABYLON'13", "img/minimap-instytutska-0922.png");  
   } else if (direction === 'up') {
-     stopVideo();  
+     stopVideo(); 
+     map.setFilter('fights', [ "in", 'time', 2100, 200900, 200910 ]);
+     animateFly([30.523568,50.449962], zoom_size*1.1, 10, 10);
   }
 },{ offset: 150 });
 
 
 $('#sixty-eight').waypoint(function(direction) {
   showKilling("2014-02-20 09:22:00", "2014-02-20 09:26:00", true);
-  animateFly([30.527048, 50.448768], zoom_size*1.17, 10, 10);
+  map.setFilter('fights', [ "in", 'time', 2100, 200900, 200920]);
   if (direction === 'down') {
+    animateFly([30.527048, 50.448768], zoom_size*1.17, 10, 10);
     stopVideo();
   } else if (direction === 'up') {
-    playVideo("http://texty.org.ua/video/maidan_maps/instytutska-0922.mp4", "Смерть Андрія Дигдаловича, 09:22:51 20 лютого", "img/minimap-instytutska-0922.png");   
+    playVideo("http://texty.org.ua/video/maidan_maps/instytutska-0922.mp4", "Смерть Андрія Дигдаловича, 09:22:51 20 лютого. Відео BABYLON'13", "img/minimap-instytutska-0922.png");   
   }
 },{ offset: 350 });
 
 
 $('#sixty-nine').waypoint(function(direction) {
-  $(".mapboxgl-popup").fadeOut("slow");
+  $(".mapboxgl-popup").remove();
   showKilling("2014-02-20 09:26:01", "2014-02-20 09:28:00", false);
   createPopup([30.528612462947695, 50.448532866121219], 'Дзявульський, Кемський, Опанасюк');
   if (direction === "up") {
     morph("geo200921", ["maidan","berkut","chorna-rota"]);
   }
-},{ offset: 150 });
+},{ offset: 100 });
 
 
 $('#seventy').waypoint(function(direction) {
-  $(".mapboxgl-popup").fadeOut("slow");
+  $(".mapboxgl-popup").remove();
   showKilling("2014-02-20 09:28:01", "2014-02-20 09:29:40", true);
   morph("geo200929", ["maidan","berkut","chorna-rota"]);
-},{ offset: 150 });
+  if (direction === "up") {
+    map.setFilter('fights', [ "in", 'time', 2100, 200900, 200920]);
+  }
+},{ offset: 100 });
 
 
 $('#seventy-one').waypoint(function(direction) {
-  $(".mapboxgl-popup").fadeOut("slow");
+  $(".mapboxgl-popup").remove();
   showKilling("2014-02-20 09:29:41", "2014-02-20 09:47:11", false);
+   map.setFilter('fights', [ "in", 'time', 2100, 200900, 200925]);
   createPopup([30.528949480304266, 50.448046761295394], 'Гриневич, Жиловага');
   createPopup([30.528334370230827, 50.448306019834526], 'Ушневич, Жеребний, Варениця, Точин');
 },{ offset: 200 });
 
 
 $('#seventy-two').waypoint(function(direction) {
-  $(".mapboxgl-popup").fadeOut("slow");
-  showKilling("2014-02-20 09:47:12", "2014-02-20 09:56:28",false);
-  createPopup([50.448190345594632, 30.528439171999914], 'Паращук, Ткачук, Зубенко, Пантелєєв, Голоднюк, Гурик, Котляр');
+  $(".mapboxgl-popup").remove();
+  showKilling("2014-02-20 09:47:12", "2014-02-20 09:56:28", false);
+  createPopup([30.528439171999914, 50.448190345594632], 'Паращук, Ткачук, Зубенко, Пантелєєв, Голоднюк, Гурик');
 },{ offset: 200 });
 
 
 $('#seventy-three').waypoint(function(direction) {
-  $(".mapboxgl-popup").fadeOut("slow");
+  $(".mapboxgl-popup").remove();
   showKilling("2014-02-20 09:56:29", "2014-02-20 11:29:54",false);
   createPopup([30.526485293253895, 50.449354803550193], 'Полянський');
   createPopup([30.52885167800893, 50.447952269965796], 'Шилінг');
-  createPopup([30.528407731469191, 50.448185896579758], 'Паньків, Царьок, Чміленко, Чаплінський');
+  createPopup([30.528407731469191, 50.448185896579758], 'Паньків, Царьок, Чміленко, Чаплінський, Котляр');
   createPopup([30.529006812684287, 50.44817776032658], 'Храпаченко');
+  if (direction === "up") {
+    animateFly([30.527048, 50.448768], zoom_size*1.17, 10, 10);
+  }
 },{ offset: 10 });
 
 
 $('#seventy-four').waypoint(function(direction) {
-  $(".mapboxgl-popup").fadeOut("slow");
-  animateFly([30.522290,50.450731], zoom_size*1.05, 20, 0);
+  $(".mapboxgl-popup").remove();
   if (direction === 'down') {
+     animateFly([30.522290,50.450731], zoom_size*1.05, 20, 0);
      playVideo("http://texty.org.ua/video/maidan_maps/instytutska-1001.mp4", "Eпіцентр розстрілів, ~10:01 20 лютого", "img/minimap-instytutska-1001.png");  
   } else if (direction === 'up') {
      stopVideo();  
      morph("geo200929", ["maidan", "berkut"]);
      map.getSource('barricade-data').setData("data/lines_200921.geojson");
      d3.select("#chorna-rota").attr("opacity", 0.8);
-     animateFly([30.527048, 50.448768], zoom_size*1.17, 10, 10);
   }
 },{ offset: 10 });
 
 
 $('#seventy-five').waypoint(function(direction) {
-  $(".mapboxgl-popup").fadeOut("slow");
+  $(".mapboxgl-popup").remove();
   d3.select("#chorna-rota").attr("opacity", 0);
   showKilling("2014-02-20 11:29:55", "2014-02-20 16:57:55", true);
   if (direction === 'down') {
@@ -1151,13 +1203,17 @@ $('#seventy-five').waypoint(function(direction) {
 
 
 $('#seventy-six').waypoint(function(direction) {
+  map.setFilter('fights', [ "in", 'time', 2100, 200900]);
   map.getSource('barricade-data').setData("data/lines_201610.geojson");
   morph("geo201610", ["maidan", "berkut"]);
 },{ offset: 350 });
 
 
 $('#seventy-seven').waypoint(function(direction) {
-  $(".mapboxgl-popup").fadeOut("slow");
+  $(".mapboxgl-popup").remove();
+  if (direction === "up") {
+    animateFly([30.522290,50.450731], zoom_size*1.05, 20, 0);
+  }
 },{ offset: 150 });
 
 
@@ -1165,23 +1221,23 @@ $('#seventy-seven').waypoint(function(direction) {
 $('#seventy-eight').waypoint(function(direction) {
   animateFly([30.527048, 50.448768], zoom_size*1.12, 60, 0);
   if (direction === "down") {
-    $(".mapboxgl-popup").fadeOut("slow");
-    $("#maidan, #mvs, #padmin, #berkut, .legend").animate({ opacity: 0 }, 2500 );
+    $(".mapboxgl-popup").remove();
+    $("#maidan, #mvs, #padmin, #berkut, .legend, .mute-btn-wrapper").animate({ opacity: 0 }, 2500 );
     map.setPaintProperty('buildings', 'fill-opacity', 0);
     map.setPaintProperty('barricade', 'line-opacity', 0);
     map.setPaintProperty('fights', 'line-opacity', 0);
     d3.selectAll("circle")
       .transition()
-      .delay(function(d, i) { return i * 200; })
-      .attr("r", "15px")
+      .delay(function(d, i) { return i * 150; })
+      .attr("r", 15)
       .transition()
       .duration(500)
-      .attr("r", "5px")
+      .attr("r", 7)
       .attr("fill", "#ffffff")
       .attr("stroke", "#ffffff");
   } else if (direction === "up") {
      $("#maidan, #mvs, #padmin, #berkut").animate({ opacity: 0.2 }, 2500 );
-     $(".legend").animate({ opacity: 1 }, 2500 );
+     $(".legend, .mute-btn-wrapper").animate({ opacity: 1 }, 2500 );
      map.setPaintProperty('buildings', 'fill-opacity', 0.3);
      map.setPaintProperty('barricade', 'line-opacity', 0.8);
      map.setPaintProperty('fights', 'line-opacity', 1);
