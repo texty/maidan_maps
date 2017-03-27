@@ -51,13 +51,13 @@ h2 {
   margin-top: 10em;
   padding-bottom: 1em;
   @media #{$brk-xlarge} {
-    @include text(2.5em, 3em, 800);
+    @include text(2.5em, 1.7em, 800);
   }
   @media #{$brk-large} {
-     @include text(2.1em, 2.2em, bold);
+     @include text(2.1em, 1.8em, bold);
   }
   @media #{$brk-medium} {
-     @include text(1.8em, 2em, bold);
+     @include text(1.8em, 1.8em, bold);
   }
   @media #{$brk-spnarrow} {
      @include text(1.7em, 1.8em, bold);

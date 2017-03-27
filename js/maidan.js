@@ -542,15 +542,15 @@ $('#six').waypoint(function(direction) {
 $('#seven').waypoint(function(direction) {
   showBuildings('181012');
   if (direction === 'down') {
-    $("#hint, #video-map").animate({ opacity: 1 }, 300 );
+    $("#hint, #video-map, #video-note").animate({ opacity: 1 }, 300 );
     $("#video-filter").animate({ opacity: 0.35 }, 300 );
     playVideo("http://texty.org.ua/video/maidan_maps/mariinka-start.mp4", "Початок протистояння в Маріїнському парк. Відео Денис Артемєв", "img/minimap-mariinka-start.png");
-    window.setTimeout(function(){
-      $("#hint").animate({ opacity: 0 }, 3000 );
-    },7000); 
   } else if (direction === 'up') {
     stopVideo();
     $("#hint, #video-map, #video-filter").animate({ opacity: 0 }, 300 );
+    if (screen_width >= 1024) {
+      $("#video-note").animate({ opacity: 0 }, 300 );
+    }
   }
 },{ offset: 50 });
 

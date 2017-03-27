@@ -158,11 +158,11 @@ svg {
   display: none;
   opacity: 0;
   position: absolute;
-  color: #737373;
+  color: #ffffff;
   margin-top: 10px;
   margin-left: -5px;
   text-align: center;
-  @media #{$brk-narrow} {
+  @media #{$brk-medium} {
     display: block;
   }
 }
@@ -188,6 +188,9 @@ svg {
   position: fixed; 
   bottom: 0px; 
   right: 30px;
+  @media #{$brk-medium} {
+    opacity:0;
+  }
 }
 
 #video-map {
@@ -296,6 +299,10 @@ h1 {
 }
 
 p  {
+    &.sources {
+      @include text(1.4em, 1.6em, 300);
+      padding-bottom:0px;
+    }
     & span {
       background: rgba(191,211,230,0.4);
     }

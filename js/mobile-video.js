@@ -18,6 +18,7 @@ function enableButtons(video) {
 			} else {
 				video.pause();
 				$(this).html('<i class="fa fa-play play fa-2x" aria-hidden="true">');
+				$("#hint").hide();
 			}
 		});
 	}
