@@ -548,9 +548,6 @@ $('#seven').waypoint(function(direction) {
   } else if (direction === 'up') {
     stopVideo();
     $("#hint, #video-map, #video-filter").animate({ opacity: 0 }, 300 );
-    if (screen_width >= 1024) {
-      $("#video-note").animate({ opacity: 0 }, 300 );
-    }
   }
 },{ offset: 50 });
 
@@ -605,7 +602,7 @@ $('#twelve').waypoint(function(direction) {
 
 $('#thirteen').waypoint(function(direction) {
   if (direction === 'down') {
-    playVideo("http://texty.org.ua/video/maidan_maps/grushevskogo9.mp4", "Тітушки та силовики добивають поранених протестувальників біля будинку №9 на вул. Грушевського", "img/minimap-grushevskogo9.png"); 
+    playVideo("http://texty.org.ua/video/maidan_maps/grushevskogo9.mp4", "Тітушки та силовики добивають поранених протестувальників біля будинку №9 на вул. Грушевського. Відео Oleg V.", "img/minimap-grushevskogo9.png"); 
   } else if (direction === 'up') {
     stopVideo();
   }
@@ -618,7 +615,7 @@ $('#fourteen').waypoint(function(direction) {
   if (direction === 'down') {
     stopVideo();
   } else if (direction === 'up') {
-    playVideo("http://texty.org.ua/video/maidan_maps/grushevskogo9.mp4", "Тітушки та силовики добивають поранених протестувальників біля будинку №9 на вул. Грушевського", "img/minimap-grushevskogo9.png");
+    playVideo("http://texty.org.ua/video/maidan_maps/grushevskogo9.mp4", "Тітушки та силовики добивають поранених протестувальників біля будинку №9 на вул. Грушевського. Відео Oleg V.", "img/minimap-grushevskogo9.png");
   }
 },{ offset: 350 });
 
@@ -671,7 +668,7 @@ $('#eighteen').waypoint(function(direction) {
 
 $('#nineteen').waypoint(function(direction) {
   if (direction === 'down') {
-    playVideo("http://texty.org.ua/video/maidan_maps/shovkovychna.mp4", "Протистояння на перехресті Інститутська-Шовковична. Відео Максима Кудимеця", "img/minimap-shovkovychna.png"); 
+    playVideo("http://texty.org.ua/video/maidan_maps/shovkovychna.mp4", "Протистояння на перехресті Інститутська-Шовковична. Відео Максима Кудимця", "img/minimap-shovkovychna.png"); 
   } else if (direction === 'up') {
     stopVideo(); 
   }
@@ -682,7 +679,7 @@ $('#twenty').waypoint(function(direction) {
   if (direction === 'down') {
     stopVideo(); 
   } else if (direction === 'up') {
-    playVideo("http://texty.org.ua/video/maidan_maps/shovkovychna.mp4", "Протистояння на перехресті Інститутська-Шовковична. Відео Максима Кудимеця", "img/minimap-shovkovychna.png"); 
+    playVideo("http://texty.org.ua/video/maidan_maps/shovkovychna.mp4", "Протистояння на перехресті Інститутська-Шовковична. Відео Максима Кудимця", "img/minimap-shovkovychna.png"); 
   }
 },{ offset: 350 });
 
@@ -1013,7 +1010,7 @@ $('#fifty-five').waypoint(function(direction) {
 
 $('#fifty-six').waypoint(function(direction) {
   if (direction === 'down') {
-    playVideo("http://texty.org.ua/video/maidan_maps/retreat-20.mp4", "Відступ силовиків до урядового кварталу ~9:10 20 січня", "img/minimap-retreat-20.png");  
+    playVideo("http://texty.org.ua/video/maidan_maps/retreat-20.mp4", "Відступ силовиків до урядового кварталу ~9:10 20 січня. Відео Maidan18-20 History", "img/minimap-retreat-20.png");  
   } else if (direction === 'up') {
      stopVideo();  
      morph("geo200905", ["maidan", "berkut","chorna-rota"]);
@@ -1025,7 +1022,7 @@ $('#fifty-seven').waypoint(function(direction) {
   if (direction === 'down') {
     stopVideo();
   } else if (direction === 'up') {
-    playVideo("http://texty.org.ua/video/maidan_maps/retreat-20.mp4", "Відступ силовиків до урядового кварталу ~9:10 20 січня", "img/minimap-retreat-20.png");  
+    playVideo("http://texty.org.ua/video/maidan_maps/retreat-20.mp4", "Відступ силовиків до урядового кварталу ~9:10 20 січня. Відео Maidan18-20 History", "img/minimap-retreat-20.png");  
   }
 },{ offset: 350 });
 
@@ -1064,7 +1061,7 @@ $('#sixty-one').waypoint(function(direction) {
 $('#sixty-two').waypoint(function(direction) {
   $(".mapboxgl-popup").remove();
   if (direction === 'down') {
-    playVideo("http://texty.org.ua/video/maidan_maps/instytutska-0913.mp4", "Снайпери з жовтими пов'язками стріляють в натовп. ~9:13 20 лютого", "img/minimap-instytutska-0913.png");  
+    playVideo("http://texty.org.ua/video/maidan_maps/instytutska-0913.mp4", "Снайпери з жовтими пов'язками стріляють в натовп. ~9:13 20 лютого. Відео ютуб-каналу «Виновных покарают»", "img/minimap-instytutska-0913.png");  
   } else if (direction === 'up') {
      stopVideo();  
   }
@@ -1078,7 +1075,7 @@ $('#sixty-three').waypoint(function(direction) {
   if (direction === 'down') {
     stopVideo();
   } else if (direction === 'up') {
-    playVideo("http://texty.org.ua/video/maidan_maps/instytutska-0913.mp4", "Снайпери з жовтими пов'язками стріляють в натовп. ~9:13 20 лютого", "img/minimap-instytutska-0913.png");  
+    playVideo("http://texty.org.ua/video/maidan_maps/instytutska-0913.mp4", "Снайпери з жовтими пов'язками стріляють в натовп. ~9:13 20 лютого. Відео ютуб-каналу «Виновных покарают»", "img/minimap-instytutska-0913.png");  
   }
 },{ offset: 350 });
 
@@ -1180,7 +1177,7 @@ $('#seventy-four').waypoint(function(direction) {
   $(".mapboxgl-popup").remove();
   if (direction === 'down') {
      animateFly([30.522290,50.450731], zoom_size*1.05, 20, 0);
-     playVideo("http://texty.org.ua/video/maidan_maps/instytutska-1001.mp4", "Eпіцентр розстрілів, ~10:01 20 лютого", "img/minimap-instytutska-1001.png");  
+     playVideo("http://texty.org.ua/video/maidan_maps/instytutska-1001.mp4", "Eпіцентр розстрілів, ~10:01 20 лютого. Відео Тараса Макаренко", "img/minimap-instytutska-1001.png");  
   } else if (direction === 'up') {
      stopVideo();  
      morph("geo200929", ["maidan", "berkut"]);
@@ -1197,7 +1194,7 @@ $('#seventy-five').waypoint(function(direction) {
   if (direction === 'down') {
     stopVideo();
   } else if (direction === 'up') {
-    playVideo("http://texty.org.ua/video/maidan_maps/instytutska-1001.mp4", "Eпіцентр розстрілів, ~10:01 20 лютого", "img/minimap-instytutska-1001.png");   
+    playVideo("http://texty.org.ua/video/maidan_maps/instytutska-1001.mp4", "Eпіцентр розстрілів, ~10:01 20 лютого. Відео Тараса Макаренко", "img/minimap-instytutska-1001.png");   
   }
 },{ offset: 350 });
 
