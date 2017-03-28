@@ -285,13 +285,13 @@ h1 {
   float:left;
   @media #{$brk-xlarge} {
     font-size:14px;
-    margin-left: -87px;
-    width: 85px;
+    margin-left: -95px;
+    width: 90px;
   }
   @media #{$brk-large} {
-    font-size:12px;
-    margin-left: -77px;
-    width: 75px;
+    font-size:11px;
+    margin-left: -80px;
+    width: 80px;
   }
   @media #{$brk-spnarrow} {
   font-size:12px;
@@ -360,7 +360,6 @@ p  {
 
 .padded-multiline { 
   line-height: 2; 
-  padding: 2px 0; 
   width: 300px;
   margin-bottom:700px;
  @media #{$brk-spnarrow} {
@@ -369,9 +368,11 @@ p  {
 }
 
 .padded-multiline span { 
-  background-color: rgba(15, 15, 19,0.7);
   color: #eee; 
   display: inline;
+  padding:3px;
+  background: rgba(15, 15, 19,0.7);
+  box-shadow: 5px 0px 0px rgba(15, 15, 19,0.7), -5px 0 0  rgba(15, 15, 19,0.7);
   
   /* Needs prefixing */
   box-decoration-break: clone;
