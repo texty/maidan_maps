@@ -76,6 +76,7 @@ svg {
   margin-right: auto; 
   margin-top: 13%;
   width: 35%;
+  text-align: center;
   @media #{$brk-narrow} {
     margin-top: 35%;
     width: 50%;
@@ -247,8 +248,6 @@ h1 {
 
 .subtitle {
     color: #eee;
-    text-align:center;
-    margin-bottom: 2em;
 }
 
 
