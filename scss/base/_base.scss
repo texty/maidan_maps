@@ -84,7 +84,7 @@ h3 {
 
 p,li {
   @media #{$brk-xlarge} {
-    @include text(1.8em, 2em, 300);
+    @include text(2.1em, 2em, 300);
   }
   @media #{$brk-large} {
     @include text(1.5em, 1.8em, 300);
