@@ -75,7 +75,7 @@ svg {
   margin-left: auto; 
   margin-right: auto; 
   margin-top: 13%;
-  width: 35%;
+  width: 37%;
   text-align: center;
   @media #{$brk-narrow} {
     margin-top: 35%;
@@ -248,6 +248,15 @@ h1 {
 
 .subtitle {
     color: #eee;
+    @media #{$brk-xxlarge} {
+      @include text(3em, 1.6em);
+    }
+    @media #{$brk-xlarge} {
+      @include text(2.3em, 1.6em);
+    }
+    @media #{$brk-large} {
+      @include text(1.6em, 1.5em);
+  }
 }
 
 
@@ -263,8 +272,11 @@ h1 {
     color: #ffeda0;
     font-weight:400;
   }
+  @media #{$brk-xxlarge} {
+    @include text(2em, 1.6em);
+  }
   @media #{$brk-xlarge} {
-    @include text(1.5em, 1.6em);
+    @include text(1.6em, 1.6em);
   }
   @media #{$brk-large} {
     @include text(1.3em, 1.5em);
@@ -282,10 +294,11 @@ h1 {
   color: #ffffff;
   font-style: italic;
   float:left;
-  @media #{$brk-xlarge} {
+  @media #{$brk-xxlarge} {
     font-size:14px;
     margin-left: -95px;
     width: 90px;
+    padding-top: 15px;
   }
   @media #{$brk-large} {
     font-size:11px;

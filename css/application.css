@@ -34,7 +34,7 @@ a {
     font-weight: 800; } }
 @media (max-width: 1366px) {
   h1 {
-    font-size: 4.5em;
+    font-size: 4em;
     line-height: 1.2em;
     font-weight: 800; } }
 @media (max-width: 768px) {
@@ -97,6 +97,11 @@ h3 {
 
 p, li {
   padding-bottom: 1.5em; }
+  @media (max-width: 2560px) {
+    p, li {
+      font-size: 2.3em;
+      line-height: 2em;
+      font-weight: 300; } }
   @media (max-width: 1920px) {
     p, li {
       font-size: 2.1em;
@@ -263,7 +268,7 @@ svg {
   margin-left: auto;
   margin-right: auto;
   margin-top: 13%;
-  width: 35%;
+  width: 37%;
   text-align: center; }
   @media (max-width: 768px) {
     .header-text {
@@ -417,6 +422,18 @@ h1 {
 
 .subtitle {
   color: #eee; }
+  @media (max-width: 2560px) {
+    .subtitle {
+      font-size: 3em;
+      line-height: 1.6em; } }
+  @media (max-width: 1920px) {
+    .subtitle {
+      font-size: 2.3em;
+      line-height: 1.6em; } }
+  @media (max-width: 1366px) {
+    .subtitle {
+      font-size: 1.6em;
+      line-height: 1.5em; } }
 
 .credits {
   text-align: center; }
@@ -428,9 +445,13 @@ h1 {
     text-transform: uppercase;
     color: #ffeda0;
     font-weight: 400; }
+  @media (max-width: 2560px) {
+    .credits {
+      font-size: 2em;
+      line-height: 1.6em; } }
   @media (max-width: 1920px) {
     .credits {
-      font-size: 1.5em;
+      font-size: 1.6em;
       line-height: 1.6em; } }
   @media (max-width: 1366px) {
     .credits {
@@ -446,11 +467,12 @@ h1 {
   color: #ffffff;
   font-style: italic;
   float: left; }
-  @media (max-width: 1920px) {
+  @media (max-width: 2560px) {
     .date {
       font-size: 14px;
       margin-left: -95px;
-      width: 90px; } }
+      width: 90px;
+      padding-top: 15px; } }
   @media (max-width: 1366px) {
     .date {
       font-size: 11px;
