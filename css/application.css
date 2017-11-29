@@ -600,4 +600,16 @@ div.tooltip {
   pointer-events: none;
   width: 5px; }
 
+.cont {
+  display: inline-flex;
+  justify-content: space-between; }
+
+.ukr-eng {
+  font-size: 2em;
+  font-weight: bold;
+  color: #ffffff;
+  opacity: 0.6; }
+  .ukr-eng:hover {
+    color: #faa51b; }
+
 /*# sourceMappingURL=application.css.map */
