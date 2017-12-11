@@ -601,7 +601,7 @@ div.tooltip {
   width: 5px; }
 
 .cont {
-  display: inline-flex;
+  display: flex;
   justify-content: space-between; }
 
 .ukr-eng {
